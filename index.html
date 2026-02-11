@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>A Special Surprise</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  </head>
+  <body>
+    <div class="background-grid" id="backgroundGrid">
+      <!-- Grid items will be injected by JS -->
+    </div>
+
+    <div class="overlay"></div>
+
+    <main class="container">
+      <!-- View 1: Landing -->
+      <section id="landing-view" class="glass-card active">
+        <h1 class="title">For My Valentine</h1>
+        <p class="subtitle">I have something special for you...</p>
+        <button id="start-btn" class="primary-btn">See Surprise</button>
+      </section>
+
+      <!-- View 2: Context/Buildup -->
+      <section id="buildup-view" class="glass-card hidden">
+        <h2 class="title">From My Heart...</h2>
+        <p class="subtitle fade-text">There's something I need to say.</p>
+        <button id="reveal-btn" class="primary-btn pulse-anim">
+          Read My Letter
+        </button>
+      </section>
+
+      <!-- View 2.5: Image Stack -->
+      <section id="image-stack-view" class="glass-card hidden">
+        <h2 class="title">Our Memories</h2>
+        <p class="subtitle">Tap to see more...</p>
+        <div class="stack-container" id="stack-container">
+          <!-- Images will be injected by JS -->
+          <button id="next-btn" class="primary-btn hidden">
+            One final thing... ❤️
+          </button>
+        </div>
+      </section>
+
+      <!-- View 3: Final Surprise -->
+      <section id="surprise-view" class="glass-card hidden">
+        <div class="love-letter">
+          <p>
+            I know I have hurt you sometimes. I’ve been angry, rude, and said
+            things I shouldn’t have. I know I made you cry, and I know it wasn’t
+            easy for you. I am truly sorry for every moment that caused you
+            pain.
+          </p>
+          <p>
+            Nothing I did was ever intentional. I never wanted to make you sad.
+            And I never stopped loving you — not even for a second. Maybe I
+            don’t always show it the right way, but my love for you is real and
+            from the bottom of my heart.
+          </p>
+          <p class="highlight">Please forgive me.</p>
+          <h1 class="title glow small-title">
+            Happy Valentine’s Day<br />My Love of Life ❤️
+          </h1>
+        </div>
+
+        <div class="response-buttons">
+          <button id="yes-btn" class="primary-btn">Yes</button>
+          <button id="no-btn" class="secondary-btn">No</button>
+        </div>
+        <div id="response-feedback" class="feedback-text"></div>
+
+        <button id="replay-btn" class="secondary-btn hidden">
+          Replay Surprise
+        </button>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

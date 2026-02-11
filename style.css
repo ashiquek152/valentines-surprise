@@ -1,0 +1,593 @@
+:root {
+  --primary-color: #ff4d6d;
+  --secondary-color: #c9184a;
+  --text-color: #fff;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Outfit", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed; /* Lock viewport on mobile */
+  overscroll-behavior: none; /* Prevent bounce effects */
+  touch-action: none; /* Disable browser zooming/panning gestures */
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #0f0f0f;
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Background Grid */
+.background-grid {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  z-index: 0;
+  opacity: 0.6;
+  animation: panGrid 60s linear infinite;
+  transform: rotate(-15deg);
+}
+
+.grid-item {
+  width: 100%;
+  height: 300px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+  opacity: 0.8;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes panGrid {
+  0% {
+    transform: rotate(-15deg) translateY(0);
+  }
+  100% {
+    transform: rotate(-15deg) translateY(-20%);
+  } /* simple pan for now */
+}
+
+/* Overlay to darken background */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  z-index: 1;
+  backdrop-filter: blur(3px);
+}
+
+/* Main Container */
+.container {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Glassmorphism Card */
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(20, 20, 20, 0.6); /* Darker for better text contrast */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 77, 109, 0.3); /* Subtle pink border */
+  padding: 3rem 2rem;
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* Inner shine */
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Absolute positioning for stacking transitions */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ... existing styles ... */
+
+/* Gift Reveal Specifics */
+.love-letter {
+  text-align: center;
+  line-height: 2; /* More breathing room */
+  font-size: 1.25rem;
+  font-family: var(--font-heading);
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0 auto 2.5rem auto;
+  max-width: 90%;
+
+  /* Paper/Card effect inside glass */
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.love-letter p {
+  margin-bottom: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.love-letter .highlight {
+  display: block; /* Give it its own line */
+  font-weight: 400; /* Playfair Display is naturally boldish */
+  font-style: italic;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  text-transform: none; /* More natural */
+  letter-spacing: 1px;
+  margin-top: 3rem;
+  text-shadow: 0 0 15px rgba(255, 77, 109, 0.6);
+}
+
+.small-title {
+  font-size: 2.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  font-family:
+    "Great Vibes", cursive, var(--font-heading); /* Try to use a script font if available, fallback to heading */
+}
+.glass-card.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.glass-card.hidden {
+  opacity: 0;
+  transform: translate(-50%, -40%) scale(0.95);
+  pointer-events: none;
+}
+
+/* Typography */
+.title {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+
+/* Buttons */
+.primary-btn {
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  border: none;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  color: white;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 500;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+}
+
+.primary-btn:active {
+  transform: translateY(1px);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  margin-top: 2rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+.pulse-anim {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 77, 109, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 109, 0);
+  }
+}
+
+.glow {
+  animation: glowText 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowText {
+  from {
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.5),
+      0 0 20px rgba(255, 77, 109, 0.3);
+  }
+  to {
+    text-shadow:
+      0 0 20px rgba(255, 255, 255, 0.8),
+      0 0 30px rgba(201, 24, 74, 0.6);
+  }
+}
+
+/* Gift Reveal Specifics */
+/* Gift Reveal Specifics */
+.love-letter {
+  text-align: center; /* Center for a poetic/card look */
+  line-height: 1.8;
+  font-size: 1.25rem;
+  font-family: var(--font-heading); /* Use serif font for elegance */
+  color: #fff;
+  margin-bottom: 2rem;
+  max-width: 100%;
+}
+
+.love-letter p {
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.love-letter .highlight {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 2.5rem;
+  text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+}
+
+.small-title {
+  font-size: 2.2rem;
+  margin-top: 3rem;
+  line-height: 1.3;
+}
+
+/* Stack Container */
+.stack-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* Constrain width on large screens */
+  height: 60vh; /* Responsive height */
+  max-height: 500px;
+  margin: 1rem auto;
+  perspective: 1000px;
+}
+
+.stack-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Show full image */
+  background-color: #f0f0f0; /* Light background for photo feel */
+  border: 8px solid #fff; /* Photo border */
+  border-radius: 4px; /* Slight rounding for photo paper */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.5s ease-in-out,
+    opacity 0.5s ease-in-out,
+    filter 0.5s ease;
+  transform-origin: center bottom;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+/* Stacking effect - messy stack with rotations */
+.stack-card:nth-child(1) {
+  z-index: 4;
+  transform: scale(1) translateY(0) rotate(-2deg);
+}
+
+.stack-card:nth-child(2) {
+  z-index: 3;
+  transform: scale(0.95) translateY(10px) rotate(3deg);
+  opacity: 1;
+}
+
+.stack-card:nth-child(3) {
+  z-index: 2;
+  transform: scale(0.9) translateY(20px) rotate(-1deg);
+  opacity: 1;
+}
+
+.stack-card:nth-child(4) {
+  z-index: 1;
+  transform: scale(0.85) translateY(30px) rotate(2deg);
+  opacity: 1;
+}
+
+/* Hide cards beyond the 4th one */
+.stack-card:nth-child(n + 5) {
+  z-index: 0;
+  transform: scale(0.85) translateY(30px) rotate(0deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Shifting state: Animate cards to their NEXT positions */
+.shifting .stack-card:nth-child(2) {
+  transform: scale(1) translateY(0) rotate(-2deg);
+  opacity: 1;
+  z-index: 4;
+}
+
+.shifting .stack-card:nth-child(3) {
+  transform: scale(0.95) translateY(10px) rotate(3deg);
+  opacity: 1;
+  z-index: 3;
+}
+
+.shifting .stack-card:nth-child(4) {
+  transform: scale(0.9) translateY(20px) rotate(-1deg);
+  opacity: 1;
+  z-index: 2;
+}
+
+.shifting .stack-card:nth-child(5) {
+  transform: scale(0.85) translateY(30px) rotate(2deg);
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Animation classes */
+.slide-out-left {
+  animation: slideOutLeft 0.5s forwards; /* Speed up slightly to match JS timeout */
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.5s forwards;
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: scale(1) translateX(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) translateX(-120%) rotate(-20deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: scale(1) translateX(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) translateX(120%) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* Specific Button overrides */
+#next-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0; /* Behind cards initially, but revealed when cards are gone */
+  margin-top: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .stack-container {
+    height: 55vh; /* Taller on mobile relative to viewport */
+    max-height: none;
+    width: 100%;
+  }
+
+  .glass-card {
+    padding: 1.5rem 1rem;
+    width: 95%;
+    max-height: 90vh; /* Prevent overflow on small screens */
+    overflow-y: auto; /* Enable scrolling for long content */
+    display: block; /* Remove flex to allow scrolling flow */
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+}
+
+.hidden {
+  display: none !important; /* Force hide */
+}
+
+/* Response Section */
+.response-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.feedback-text {
+  min-height: 3rem; /* Reserve space */
+  margin-top: 1.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(10px) rotate(5deg);
+  }
+}
+
+/* Screen Shake Effect */
+.shake-active {
+  animation: severeShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes severeShake {
+  10%,
+  90% {
+    transform: translate3d(-4px, 0, 0) rotate(-2deg);
+  }
+  20%,
+  80% {
+    transform: translate3d(8px, 0, 0) rotate(2deg);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-16px, 0, 0) rotate(-4deg);
+  }
+  40%,
+  60% {
+    transform: translate3d(16px, 0, 0) rotate(4deg);
+  }
+}
+
+/* Falling Heart */
+.falling-heart {
+  position: fixed;
+  top: -10vh;
+  z-index: 1000;
+  font-size: 5rem;
+  pointer-events: none;
+  animation: fallBounce 1.5s ease-in forwards;
+  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes fallBounce {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(60vh) rotate(10deg);
+  }
+  75% {
+    transform: translateY(45vh) rotate(-5deg);
+  }
+  100% {
+    transform: translateY(110vh) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* Neon Message */
+.neon-message {
+  font-family: "Great Vibes", cursive, var(--font-heading);
+  font-size: 3.5rem;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px #ff00de,
+    0 0 30px #ff00de,
+    0 0 40px #ff00de,
+    0 0 55px #ff00de,
+    0 0 75px #ff00de;
+  animation: flicker 1.5s infinite alternate;
+  margin-top: 2rem;
+}
+
+@keyframes flicker {
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.5;
+  }
+}
