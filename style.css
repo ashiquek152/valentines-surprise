@@ -1,11 +1,13 @@
 :root {
-  --primary-color: #ff4d6d;
-  --secondary-color: #c9184a;
-  --text-color: #fff;
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --font-heading: "Playfair Display", serif;
-  --font-body: "Outfit", sans-serif;
+  --primary-color: #4caf50; /* A more standard, modern green */
+  --secondary-color: #81c784; /* Softer green */
+  --text-main: #202124; /* Google standard dark gray */
+  --text-secondary: #5f6368;
+  --glass-bg: rgba(255, 255, 255, 0.85); /* More opaque, cleaner */
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --font-family: "Google Sans", "Outfit", sans-serif;
+  --radius-lg: 28px;
+  --radius-sm: 12px;
 }
 
 * {
@@ -27,12 +29,13 @@ body {
 }
 
 body {
-  font-family: var(--font-body);
-  background-color: #0f0f0f;
-  color: var(--text-color);
+  font-family: var(--font-family);
+  background-color: #f8f9fa; /* Google light gray background */
+  color: var(--text-main);
   display: flex;
   justify-content: center;
   align-items: center;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Background Grid */
@@ -44,11 +47,11 @@ body {
   height: 200%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
+  gap: 20px;
   z-index: 0;
-  opacity: 0.6;
-  animation: panGrid 60s linear infinite;
-  transform: rotate(-15deg);
+  opacity: 0.1; /* Extremely subtle */
+  animation: panGrid 80s linear infinite;
+  transform: rotate(-10deg);
 }
 
 .grid-item {
@@ -56,8 +59,9 @@ body {
   height: 300px;
   background-position: center;
   background-size: cover;
-  border-radius: 12px;
-  opacity: 0.8;
+  border-radius: var(--radius-sm);
+  opacity: 0.6;
+  filter: grayscale(20%); /* Slight mute */
   transition: opacity 0.5s ease;
 }
 
@@ -70,20 +74,17 @@ body {
   } /* simple pan for now */
 }
 
-/* Overlay to darken background */
+/* Overlay to lighten background */
+/* Overlay */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
+  background: rgba(255, 255, 255, 0.85); /* Solid wash */
   z-index: 1;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(10px);
 }
 
 /* Main Container */
@@ -97,17 +98,16 @@ body {
 
 /* Glassmorphism Card */
 /* Glassmorphism Card */
+/* Glassmorphism Card */
 .glass-card {
-  background: rgba(20, 20, 20, 0.6); /* Darker for better text contrast */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 77, 109, 0.3); /* Subtle pink border */
-  padding: 3rem 2rem;
-  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 4rem 2.5rem;
+  border-radius: var(--radius-lg);
   box-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* Inner shine */
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Absolute positioning for stacking transitions */
   position: absolute;
@@ -125,20 +125,18 @@ body {
 
 /* Gift Reveal Specifics */
 .love-letter {
-  text-align: center;
-  line-height: 2; /* More breathing room */
-  font-size: 1.25rem;
-  font-family: var(--font-heading);
-  color: rgba(255, 255, 255, 0.95);
-  margin: 0 auto 2.5rem auto;
-  max-width: 90%;
-
-  /* Paper/Card effect inside glass */
-  background: rgba(255, 255, 255, 0.03);
-  padding: 2rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+  text-align: left; /* Easier to read */
+  line-height: 1.8;
+  font-size: 1.1rem;
+  font-family: var(--font-family);
+  color: var(--text-main);
+  margin: 0 auto 2rem auto;
+  max-width: 100%;
+  background: #f1f3f4; /* Subtle box */
+  padding: 2.5rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  box-shadow: none;
 }
 
 .love-letter p {
@@ -148,15 +146,16 @@ body {
 }
 
 .love-letter .highlight {
-  display: block; /* Give it its own line */
-  font-weight: 400; /* Playfair Display is naturally boldish */
-  font-style: italic;
-  font-size: 1.8rem;
+  display: block;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-style: normal;
+  font-size: 1.4rem;
   color: var(--primary-color);
-  text-transform: none; /* More natural */
-  letter-spacing: 1px;
-  margin-top: 3rem;
-  text-shadow: 0 0 15px rgba(255, 77, 109, 0.6);
+  text-transform: none;
+  letter-spacing: -0.5px;
+  margin-top: 2rem;
+  text-shadow: none;
 }
 
 .small-title {
@@ -182,45 +181,50 @@ body {
 
 /* Typography */
 .title {
-  font-family: var(--font-heading);
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-family: var(--font-family);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
+  letter-spacing: -1px;
   line-height: 1.2;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color: var(--text-main);
+  text-shadow: none;
+}
+
+.title br {
+  display: none; /* Keep specific titles inline on desktop if possible */
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 2.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 300;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 /* Buttons */
+/* Buttons */
 .primary-btn {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--secondary-color)
-  );
+  background: var(--primary-color);
   border: none;
-  padding: 1rem 3rem;
-  font-size: 1.2rem;
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
   color: white;
-  border-radius: 50px;
+  border-radius: 100px;
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-family);
   font-weight: 500;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .primary-btn:active {
@@ -229,17 +233,22 @@ body {
 
 .secondary-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 50px;
-  margin-top: 2rem;
+  border: 1px solid #dadce0;
+  color: var(--text-main);
+  padding: 0.9rem 2.2rem;
+  border-radius: 100px;
+  font-size: 1rem;
+  margin-top: 1.5rem;
   cursor: pointer;
-  transition: background 0.3s;
+  font-family: var(--font-family);
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f1f3f4;
+  border-color: #f1f3f4;
+  color: var(--text-main);
 }
 
 /* Animations */
@@ -249,13 +258,13 @@ body {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.4);
+    box-shadow: 0 0 0 0 rgba(144, 238, 144, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 15px rgba(255, 77, 109, 0);
+    box-shadow: 0 0 0 15px rgba(144, 238, 144, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 77, 109, 0);
+    box-shadow: 0 0 0 0 rgba(144, 238, 144, 0);
   }
 }
 
@@ -266,42 +275,19 @@ body {
 @keyframes glowText {
   from {
     text-shadow:
-      0 0 10px rgba(255, 255, 255, 0.5),
-      0 0 20px rgba(255, 77, 109, 0.3);
+      0 0 10px rgba(144, 238, 144, 0.5),
+      0 0 20px rgba(60, 179, 113, 0.3);
   }
   to {
     text-shadow:
-      0 0 20px rgba(255, 255, 255, 0.8),
-      0 0 30px rgba(201, 24, 74, 0.6);
+      0 0 20px rgba(144, 238, 144, 0.8),
+      0 0 30px rgba(46, 139, 87, 0.6);
   }
 }
 
 /* Gift Reveal Specifics */
 /* Gift Reveal Specifics */
-.love-letter {
-  text-align: center; /* Center for a poetic/card look */
-  line-height: 1.8;
-  font-size: 1.25rem;
-  font-family: var(--font-heading); /* Use serif font for elegance */
-  color: #fff;
-  margin-bottom: 2rem;
-  max-width: 100%;
-}
-
-.love-letter p {
-  margin-bottom: 1.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.love-letter .highlight {
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 2.5rem;
-  text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
-}
+/* Removed old outdated styles */
 
 .small-title {
   font-size: 2.2rem;
@@ -483,7 +469,7 @@ body {
   margin-top: 1.5rem;
   font-size: 2rem;
   font-weight: bold;
-  color: #fff;
+  color: #2c3e50; /* Dark text for visibility */
   transition: all 0.3s ease;
 }
 
@@ -532,7 +518,8 @@ body {
   z-index: 1000;
   font-size: 5rem;
   pointer-events: none;
-  animation: fallBounce 1.5s ease-in forwards;
+  pointer-events: none;
+  animation: fallBounce 4s ease-in forwards;
   filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
 }
 
@@ -557,37 +544,23 @@ body {
 }
 
 /* Neon Message */
+/* Modern Heading Message - No Neon Cliche */
 .neon-message {
-  font-family: "Great Vibes", cursive, var(--font-heading);
-  font-size: 3.5rem;
-  line-height: 1.2;
-  color: #fff;
-  text-shadow:
-    0 0 5px #fff,
-    0 0 10px #fff,
-    0 0 20px #ff00de,
-    0 0 30px #ff00de,
-    0 0 40px #ff00de,
-    0 0 55px #ff00de,
-    0 0 75px #ff00de;
-  animation: flicker 1.5s infinite alternate;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1.3;
+  color: var(--primary-color); /* Google Green */
+  text-shadow: none;
   margin-top: 2rem;
-}
-
-@keyframes flicker {
-  0%,
-  19%,
-  21%,
-  23%,
-  25%,
-  54%,
-  56%,
-  100% {
-    opacity: 1;
-  }
-  20%,
-  24%,
-  55% {
-    opacity: 0.5;
-  }
+  letter-spacing: -0.5px;
+  background: -webkit-linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: none; /* Remove flicker */
 }

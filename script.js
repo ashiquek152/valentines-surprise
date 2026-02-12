@@ -10,24 +10,24 @@ const bgImages = [
 // Stack images (New generated ones + placeholder)
 const stackImages = [
   "assets/memos/IMG_11.JPG",
-  "assets/memos/IMG_12.JPG",
-  "assets/memos/IMG_13.jpg",
-  "assets/memos/IMG_15.JPG",
-  "assets/memos/IMG_16.JPG",
-  "assets/memos/IMG_18.jpg",
-  "assets/memos/IMG_110.jpg",
-  "assets/memos/IMG_111.jpg",
-  "assets/memos/IMG_112.JPG",
-  "assets/memos/IMG_113.JPG",
-  "assets/memos/IMG_114.jpg",
-  "assets/memos/IMG_115.jpg",
-  "assets/memos/IMG_116.jpg",
-  "assets/memos/IMG_117.jpg",
-  "assets/memos/IMG_118.jpg",
-  "assets/memos/IMG_119.jpg",
-  "assets/memos/IMG_120.jpg",
-  "assets/memos/IMG_121.jpg",
-  "assets/memos/IMG_122.jpg",
+  // "assets/memos/IMG_12.JPG",
+  // "assets/memos/IMG_13.jpg",
+  // "assets/memos/IMG_15.JPG",
+  // "assets/memos/IMG_16.JPG",
+  // "assets/memos/IMG_18.jpg",
+  // "assets/memos/IMG_110.jpg",
+  // "assets/memos/IMG_111.jpg",
+  // "assets/memos/IMG_112.JPG",
+  // "assets/memos/IMG_113.JPG",
+  // "assets/memos/IMG_114.jpg",
+  // "assets/memos/IMG_115.jpg",
+  // "assets/memos/IMG_116.jpg",
+  // "assets/memos/IMG_117.jpg",
+  // "assets/memos/IMG_118.jpg",
+  // "assets/memos/IMG_119.jpg",
+  // "assets/memos/IMG_120.jpg",
+  // "assets/memos/IMG_121.jpg",
+  // "assets/memos/IMG_122.jpg",
 ];
 
 // Shuffle/Randomize logic for grid
@@ -200,15 +200,32 @@ function revealNextButton() {
   if (nextBtn) {
     nextBtn.classList.remove("hidden");
     nextBtn.style.zIndex = 20; // Bring to front
-    // Add a simple fade in or just let global styles handle it?
-    // The button has specific styles, might need a generic entry animation
     nextBtn.style.animation = "pulse 2s infinite";
+
+    // Hide title and subtitle in the memories view
+    const stackView = document.getElementById("image-stack-view");
+    if (stackView) {
+      const title = stackView.querySelector(".title");
+      const subtitle = stackView.querySelector(".subtitle");
+      if (title) title.classList.add("hidden");
+      if (subtitle) subtitle.classList.add("hidden");
+    }
   }
 }
 
 // Event Listeners
 document.getElementById("start-btn").addEventListener("click", () => {
   switchView("landing", "stack");
+
+  // Ensure title and subtitle are visible when starting/replaying
+  const stackView = document.getElementById("image-stack-view");
+  if (stackView) {
+    const title = stackView.querySelector(".title");
+    const subtitle = stackView.querySelector(".subtitle");
+    if (title) title.classList.remove("hidden");
+    if (subtitle) subtitle.classList.remove("hidden");
+  }
+
   initStack(); // Reset stack on entry
 });
 
@@ -220,7 +237,6 @@ if (nextBtn) {
 
 document.getElementById("reveal-btn").addEventListener("click", () => {
   switchView("buildup", "surprise");
-  triggerConfetti();
 });
 
 document.getElementById("replay-btn").addEventListener("click", () => {
@@ -288,7 +304,7 @@ function createFallingHeart() {
   heart.classList.add("falling-heart");
   heart.textContent = "💔";
   heart.style.left = Math.random() * 80 + 10 + "vw"; // Randomize horizontal position
-  heart.style.animationDuration = Math.random() * 0.5 + 1 + "s"; // Randomize speed slightly
+  heart.style.animationDuration = Math.random() * 2 + 3 + "s"; // Randomize speed: 3-5s
   document.body.appendChild(heart);
 
   // Cleanup
@@ -308,14 +324,14 @@ function triggerConfetti() {
       angle: 60,
       spread: 55,
       origin: { x: 0 },
-      colors: ["#ff4d6d", "#c9184a", "#ffffff"],
+      colors: ["#90EE90", "#3CB371", "#ffffff"],
     });
     confetti({
       particleCount: 7,
       angle: 120,
       spread: 55,
       origin: { x: 1 },
-      colors: ["#ff4d6d", "#c9184a", "#ffffff"],
+      colors: ["#90EE90", "#3CB371", "#ffffff"],
     });
 
     if (Date.now() < end) {
@@ -328,7 +344,7 @@ function triggerConfetti() {
       particleCount: 150,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#ff4d6d", "#ffe0e6"],
+      colors: ["#90EE90", "#E0FFE0"],
     });
   }, 250);
 }
