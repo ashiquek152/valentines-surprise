@@ -250,6 +250,10 @@ document.getElementById("replay-btn").addEventListener("click", () => {
   if (noBtn) {
     noBtn.style.display = ""; // Unhide
     if (responseButtons && noBtn.parentNode === document.body) {
+      // Remove spacer if it exists
+      const spacer = document.getElementById("no-btn-spacer");
+      if (spacer) spacer.remove();
+
       responseButtons.appendChild(noBtn); // Put back in container
     }
     // Reset inline styles from the prank
@@ -282,6 +286,15 @@ if (yesBtn && noBtn) {
 
     // Move button to body to escape transformed parent context
     if (noBtn.parentNode !== document.body) {
+      // Create a spacer to prevent Yes button from shifting
+      const spacer = document.createElement("div");
+      spacer.style.width = `${noBtn.offsetWidth}px`;
+      spacer.style.height = `${noBtn.offsetHeight}px`;
+      spacer.style.display = "inline-block";
+      spacer.id = "no-btn-spacer"; // ID for cleanup
+      // Insert spacer before moving the button
+      noBtn.parentNode.insertBefore(spacer, noBtn);
+
       document.body.appendChild(noBtn);
     }
 
@@ -344,6 +357,10 @@ if (yesBtn && noBtn) {
         feedbackEl.innerHTML = ""; // Clear any hearts
         responseButtons.style.display = "none"; // Hide buttons
         noBtn.style.display = "none"; // Hide explicitly if on body
+
+        const spacer = document.getElementById("no-btn-spacer");
+        if (spacer) spacer.remove();
+
         // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
       }
     }
@@ -361,6 +378,11 @@ if (yesBtn && noBtn) {
     feedbackEl.innerHTML = "";
     responseButtons.style.display = "none"; // Hide buttons
     noBtn.style.display = "none"; // Hide explicitly if on body
+
+    // Remove spacer
+    const spacer = document.getElementById("no-btn-spacer");
+    if (spacer) spacer.remove();
+
     // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
 
     triggerConfetti(); // Celebration!
