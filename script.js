@@ -200,7 +200,6 @@ function revealNextButton() {
   if (nextBtn) {
     nextBtn.classList.remove("hidden");
     nextBtn.style.zIndex = 20; // Bring to front
-    nextBtn.style.animation = "pulse 2s infinite";
 
     // Hide title and subtitle in the memories view
     const stackView = document.getElementById("image-stack-view");
@@ -243,6 +242,24 @@ document.getElementById("replay-btn").addEventListener("click", () => {
   switchView("surprise", "landing");
   stackInteractionCount = 0;
   nextBtn.classList.add("hidden");
+
+  // Reset No Button State
+  if (typeof noMovesCount !== "undefined") noMovesCount = 0; // Reset moves
+  if (typeof noClickCount !== "undefined") noClickCount = 0; // Reset clicks
+
+  if (noBtn) {
+    noBtn.style.display = ""; // Unhide
+    if (responseButtons && noBtn.parentNode === document.body) {
+      responseButtons.appendChild(noBtn); // Put back in container
+    }
+    // Reset inline styles from the prank
+    noBtn.style.position = "";
+    noBtn.style.left = "";
+    noBtn.style.top = "";
+    noBtn.style.zIndex = "";
+    noBtn.style.transition = "";
+  }
+  if (responseButtons) responseButtons.style.display = ""; // Unhide container
 });
 
 // Button Logic
@@ -254,31 +271,81 @@ const responseButtons = document.querySelector(".response-buttons");
 if (yesBtn && noBtn) {
   let noClickCount = 0;
 
-  noBtn.addEventListener("click", () => {
-    noClickCount++;
-    feedbackEl.innerHTML = ""; // Clear previous
+  // Prank "No" Button Logic
+  let noMovesCount = 0;
+  const MAX_MOVES = 5;
 
-    if (noClickCount <= 3) {
-      // Screen Shake
-      document.body.classList.add("shake-active");
-      setTimeout(() => document.body.classList.remove("shake-active"), 500);
+  function moveNoButton() {
+    if (noMovesCount >= MAX_MOVES) return;
 
-      // Falling Hearts
-      for (let i = 0; i < noClickCount; i++) {
-        createFallingHeart();
-      }
+    noMovesCount++;
+
+    // Move button to body to escape transformed parent context
+    if (noBtn.parentNode !== document.body) {
+      document.body.appendChild(noBtn);
+    }
+
+    // Add safe margin to prevent edge clipping (especially on scrollviews/mobile)
+    const padding = 20;
+    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+    // Ensure random coordinates are within safe bounds
+    const x = Math.random() * (maxX - padding) + padding;
+    const y = Math.random() * (maxY - padding) + padding;
+
+    // Clamp values just in case
+    const safeX = Math.max(padding, Math.min(x, maxX));
+    const safeY = Math.max(padding, Math.min(y, maxY));
+
+    noBtn.style.position = "fixed";
+    noBtn.style.left = `${safeX}px`;
+    noBtn.style.top = `${safeY}px`;
+    noBtn.style.zIndex = "1000"; // Ensure it stays on top of everything
+    noBtn.style.transition =
+      "top 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1)";
+  }
+
+  noBtn.addEventListener("mouseover", moveNoButton);
+  noBtn.addEventListener("touchstart", (e) => {
+    if (noMovesCount < MAX_MOVES) {
+      e.preventDefault(); // Prevent accidental clicks on touch
+      moveNoButton();
+    }
+  });
+
+  noBtn.addEventListener("click", (e) => {
+    if (noMovesCount < MAX_MOVES) {
+      e.preventDefault();
+      moveNoButton();
     } else {
-      // Sad ending - Replace the letter with the message
-      const loveLetter = document.querySelector(".love-letter");
-      if (loveLetter) {
-        loveLetter.innerHTML = `
+      // Logic after moves are done: Drop hearts then sad ending
+      noClickCount++;
+      feedbackEl.innerHTML = "";
+
+      if (noClickCount <= 3) {
+        // Screen Shake
+        document.body.classList.add("shake-active");
+        setTimeout(() => document.body.classList.remove("shake-active"), 500);
+
+        // Falling Hearts
+        for (let i = 0; i < noClickCount; i++) {
+          createFallingHeart();
+        }
+      } else {
+        // Sad ending - Replace the letter with the message
+        const loveLetter = document.querySelector(".love-letter");
+        if (loveLetter) {
+          loveLetter.innerHTML = `
           <p class="highlight" style="margin-top: 0">Okay, I can understand.</p>
           <p>I am Sorry 😞</p>
         `;
+        }
+        feedbackEl.innerHTML = ""; // Clear any hearts
+        responseButtons.style.display = "none"; // Hide buttons
+        noBtn.style.display = "none"; // Hide explicitly if on body
+        // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
       }
-      feedbackEl.innerHTML = ""; // Clear any hearts
-      responseButtons.style.display = "none"; // Hide buttons
-      // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
     }
   });
 
@@ -293,6 +360,7 @@ if (yesBtn && noBtn) {
 
     feedbackEl.innerHTML = "";
     responseButtons.style.display = "none"; // Hide buttons
+    noBtn.style.display = "none"; // Hide explicitly if on body
     // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
 
     triggerConfetti(); // Celebration!
