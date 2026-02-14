@@ -59,6 +59,7 @@ const views = {
   stack: document.getElementById("image-stack-view"),
   buildup: document.getElementById("buildup-view"),
   surprise: document.getElementById("surprise-view"),
+  okay: document.getElementById("okay-view"),
 };
 
 function switchView(from, to) {
@@ -213,230 +214,274 @@ function revealNextButton() {
 }
 
 // Event Listeners
-document.getElementById("start-btn").addEventListener("click", () => {
-  switchView("landing", "stack");
-
-  // Ensure title and subtitle are visible when starting/replaying
-  const stackView = document.getElementById("image-stack-view");
-  if (stackView) {
-    const title = stackView.querySelector(".title");
-    const subtitle = stackView.querySelector(".subtitle");
-    if (title) title.classList.remove("hidden");
-    if (subtitle) subtitle.classList.remove("hidden");
-  }
-
-  initStack(); // Reset stack on entry
-});
-
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    switchView("stack", "buildup");
+    switchView("stack", "surprise");
   });
 }
 
-document.getElementById("reveal-btn").addEventListener("click", () => {
-  switchView("buildup", "surprise");
+// Sequence Elements
+const sequenceContainer = document.getElementById("sequence-container");
+const sequenceText = document.getElementById("sequence-text");
+const leftTriggerBtn = document.getElementById("left-trigger-btn");
+const rightTriggerBtn = document.getElementById("right-trigger-btn");
+const walkingTeddy = document.getElementById("walking-teddy");
+const chocolateContainer = document.getElementById("chocolate-container");
+
+// Modified Start Button Logic
+document.getElementById("start-btn").addEventListener("click", () => {
+  // Hide the start button and show the sequence overlay
+  document.getElementById("start-btn").classList.add("hidden");
+  sequenceContainer.classList.remove("hidden");
+
+  // Ensure left button is visible and others are reset
+  leftTriggerBtn.classList.remove("hidden");
+  rightTriggerBtn.classList.add("hidden");
+  walkingTeddy.classList.add("hidden");
+  walkingTeddy.classList.remove("teddy-walk"); // Reset animation
+  chocolateContainer.innerHTML = ""; // Clear chocolates
+  sequenceText.innerText = "";
+  sequenceText.classList.remove("show");
+  sequenceText.classList.add("hidden");
 });
 
-document.getElementById("replay-btn").addEventListener("click", () => {
-  switchView("surprise", "landing");
-  stackInteractionCount = 0;
-  nextBtn.classList.add("hidden");
+// Left Button Logic (Teddy Walk)
+if (leftTriggerBtn) {
+  leftTriggerBtn.addEventListener("click", () => {
+    leftTriggerBtn.classList.add("hidden");
 
-  // Reset No Button State
-  if (typeof noMovesCount !== "undefined") noMovesCount = 0; // Reset moves
-  if (typeof noClickCount !== "undefined") noClickCount = 0; // Reset clicks
+    // Show Text
+    sequenceText.innerText = "Here is your teddy...";
+    sequenceText.classList.remove("hidden");
+    // Trigger reflow for animation
+    void sequenceText.offsetWidth;
+    sequenceText.classList.add("show");
 
-  if (noBtn) {
-    noBtn.style.display = ""; // Unhide
-    if (responseButtons && noBtn.parentNode === document.body) {
-      // Remove spacer if it exists
-      const spacer = document.getElementById("no-btn-spacer");
-      if (spacer) spacer.remove();
+    // Show and animate teddy
+    walkingTeddy.classList.remove("hidden");
+    // Trigger reflow
+    void walkingTeddy.offsetWidth;
+    walkingTeddy.classList.add("teddy-walk");
 
-      responseButtons.appendChild(noBtn); // Put back in container
+    // Play video
+    if (walkingTeddy.play) {
+      walkingTeddy.currentTime = 0;
+      walkingTeddy.play().catch((e) => console.log("Video play failed", e));
     }
-    // Reset inline styles from the prank
-    noBtn.style.position = "";
-    noBtn.style.left = "";
-    noBtn.style.top = "";
-    noBtn.style.zIndex = "";
-    noBtn.style.transition = "";
-  }
-  if (responseButtons) responseButtons.style.display = ""; // Unhide container
-});
 
-// Button Logic
+    // Wait for animation to finish (4s per CSS)
+    setTimeout(() => {
+      walkingTeddy.classList.add("hidden");
+      if (walkingTeddy.pause) walkingTeddy.pause(); // Pause video
+
+      // Fade out text
+      sequenceText.classList.remove("show");
+      setTimeout(() => sequenceText.classList.add("hidden"), 500);
+
+      rightTriggerBtn.classList.remove("hidden");
+    }, 4000);
+  });
+}
+
+// Right Button Logic (Chocolate Rain)
+if (rightTriggerBtn) {
+  rightTriggerBtn.addEventListener("click", () => {
+    rightTriggerBtn.classList.add("hidden");
+
+    // Show Text
+    sequenceText.innerText = "Chocolates...";
+    sequenceText.classList.remove("hidden");
+    void sequenceText.offsetWidth;
+    sequenceText.classList.add("show");
+
+    dropChocolates();
+  });
+}
+
+// Chocolate Logic
+function dropChocolates() {
+  const count = 300; // Increase count to ensure full coverage
+  const containerWidth = window.innerWidth;
+  const pileCenter = containerWidth / 2;
+  const pileSpread = containerWidth / 4;
+
+  // Fast interval to dump them quickly
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      createChocolatePiece(containerWidth);
+    }, i * 20); // Faster drop rate
+  }
+
+  // Calculate total time
+  const totalDropTime = count * 20;
+
+  // After pile up, show bouquet
+  setTimeout(() => {
+    // Hide chocolates? Or keep them?
+    // User said "After the chocolate screen show a flower boquet".
+    // It's nice to keep the pile visible behind the bouquet pop-up or clear them.
+    // Let's keep them but dim them via the bouquet overlay.
+
+    // Hide "Chocolates" text
+    sequenceText.classList.remove("show");
+    sequenceText.classList.add("hidden");
+
+    showBouquet();
+  }, totalDropTime + 2000); // Wait for drops to settle
+}
+
+function showBouquet() {
+  const bouquetContainer = document.getElementById("bouquet-container");
+  if (!bouquetContainer) return;
+
+  bouquetContainer.classList.remove("hidden");
+  // Trigger reflow
+  void bouquetContainer.offsetWidth;
+  bouquetContainer.classList.add("visible");
+
+  // Add click listener just once
+  bouquetContainer.addEventListener("click", handleBouquetClick, {
+    once: true,
+  });
+}
+
+function handleBouquetClick() {
+  const bouquetContainer = document.getElementById("bouquet-container");
+
+  // Fade out sequence container
+  sequenceContainer.style.transition = "opacity 1s";
+  sequenceContainer.style.opacity = "0";
+
+  setTimeout(() => {
+    sequenceContainer.classList.add("hidden");
+    sequenceContainer.style.opacity = "1";
+
+    // Hide bouquet for next time
+    bouquetContainer.classList.remove("visible");
+    bouquetContainer.classList.add("hidden");
+
+    // Proceed to standard flow
+    switchView("landing", "stack");
+
+    const stackView = document.getElementById("image-stack-view");
+    if (stackView) {
+      const title = stackView.querySelector(".title");
+      const subtitle = stackView.querySelector(".subtitle");
+      if (title) title.classList.remove("hidden");
+      if (subtitle) subtitle.classList.remove("hidden");
+    }
+    initStack();
+  }, 1000);
+}
+
+function createChocolatePiece(containerWidth) {
+  const piece = document.createElement("div");
+  piece.classList.add("chocolate-piece");
+
+  // 1. Uniform X Position (Filling the whole width)
+  // Use simple random for uniform distribution
+  let finalX = Math.random() * containerWidth;
+
+  // Constrain to screen width with padding
+  const safeX = Math.max(0, Math.min(finalX, containerWidth - 50));
+
+  piece.style.left = `${safeX}px`;
+  piece.style.top = "-80px"; // Start above screen
+
+  // Random z-index so they overlap naturally
+  piece.style.zIndex = Math.floor(2000 + Math.random() * 200);
+
+  chocolateContainer.appendChild(piece);
+
+  // 2. Uniform Y Position (Filling bottom 40%)
+  const windowHeight = window.innerHeight;
+  const fillHeight = windowHeight * 0.4; // 40% of screen height
+
+  // Random height within the fill zone (0 to fillHeight) from bottom
+  // We want more randomness to prevent lines
+  const randomHeightFromBottom = Math.random() * fillHeight;
+
+  // Calculate target 'top' value
+  // Top = WindowHeight - RandomHeight - PieceSize(approx 50)
+  const targetTop = windowHeight - randomHeightFromBottom - 50;
+
+  // Animate falling
+  // Vary speed: Pieces falling lower take longer? Or random?
+  // Let's make it random but related to distance to feel physically plausible
+  const distance = targetTop + 80; // Total travel pixels
+  const speed = 0.5 + Math.random() * 0.5; // px/ms factor? No, just random duration
+  const duration = 1.0 + Math.random(); // 1s to 2s
+
+  // Use a bounce effect at the end
+  piece.style.transition = `top ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform ${duration}s linear`;
+
+  requestAnimationFrame(() => {
+    piece.style.top = `${targetTop}px`;
+    // Rotate on impact (random spin)
+    piece.style.transform = `rotate(${Math.random() * 720 - 360}deg)`;
+  });
+}
+
+// Surprise View Buttons
 const yesBtn = document.getElementById("yes-btn");
 const noBtn = document.getElementById("no-btn");
-const feedbackEl = document.getElementById("response-feedback");
-const responseButtons = document.querySelector(".response-buttons");
+// Replay button removed as per request
+const feedbackText = document.getElementById("response-feedback");
 
-if (yesBtn && noBtn) {
-  let noClickCount = 0;
-
-  // Prank "No" Button Logic
-  let noMovesCount = 0;
-  const MAX_MOVES = 5;
-
-  function moveNoButton() {
-    if (noMovesCount >= MAX_MOVES) return;
-
-    noMovesCount++;
-
-    // Move button to body to escape transformed parent context
-    if (noBtn.parentNode !== document.body) {
-      // Create a spacer to prevent Yes button from shifting
-      const spacer = document.createElement("div");
-      spacer.style.width = `${noBtn.offsetWidth}px`;
-      spacer.style.height = `${noBtn.offsetHeight}px`;
-      spacer.style.display = "inline-block";
-      spacer.id = "no-btn-spacer"; // ID for cleanup
-      // Insert spacer before moving the button
-      noBtn.parentNode.insertBefore(spacer, noBtn);
-
-      document.body.appendChild(noBtn);
-    }
-
-    // Add safe margin to prevent edge clipping (especially on scrollviews/mobile)
-    const padding = 20;
-    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
-
-    // Ensure random coordinates are within safe bounds
-    const x = Math.random() * (maxX - padding) + padding;
-    const y = Math.random() * (maxY - padding) + padding;
-
-    // Clamp values just in case
-    const safeX = Math.max(padding, Math.min(x, maxX));
-    const safeY = Math.max(padding, Math.min(y, maxY));
-
-    noBtn.style.position = "fixed";
-    noBtn.style.left = `${safeX}px`;
-    noBtn.style.top = `${safeY}px`;
-    noBtn.style.zIndex = "1000"; // Ensure it stays on top of everything
-    noBtn.style.transition =
-      "top 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1)";
-  }
-
-  noBtn.addEventListener("mouseover", moveNoButton);
-  noBtn.addEventListener("touchstart", (e) => {
-    if (noMovesCount < MAX_MOVES) {
-      e.preventDefault(); // Prevent accidental clicks on touch
-      moveNoButton();
-    }
-  });
-
-  noBtn.addEventListener("click", (e) => {
-    if (noMovesCount < MAX_MOVES) {
-      e.preventDefault();
-      moveNoButton();
-    } else {
-      // Logic after moves are done: Drop hearts then sad ending
-      noClickCount++;
-      feedbackEl.innerHTML = "";
-
-      if (noClickCount <= 3) {
-        // Screen Shake
-        document.body.classList.add("shake-active");
-        setTimeout(() => document.body.classList.remove("shake-active"), 500);
-
-        // Falling Hearts
-        for (let i = 0; i < noClickCount; i++) {
-          createFallingHeart();
-        }
-      } else {
-        // Sad ending - Replace the letter with the message
-        const loveLetter = document.querySelector(".love-letter");
-        if (loveLetter) {
-          loveLetter.innerHTML = `
-          <p class="highlight" style="margin-top: 0">Okay, I can understand.</p>
-          <p>I am Sorry 😞</p>
-        `;
-        }
-        feedbackEl.innerHTML = ""; // Clear any hearts
-        responseButtons.style.display = "none"; // Hide buttons
-        noBtn.style.display = "none"; // Hide explicitly if on body
-
-        const spacer = document.getElementById("no-btn-spacer");
-        if (spacer) spacer.remove();
-
-        // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
-      }
-    }
-  });
-
+if (yesBtn) {
   yesBtn.addEventListener("click", () => {
-    // Replaced letter with Neon Message
-    const loveLetter = document.querySelector(".love-letter");
-    if (loveLetter) {
-      loveLetter.innerHTML = `
-        <p class="neon-message">Thank you<br>and<br>I love you ❤️</p>
-      `;
-    }
+    // Switch to new success view instead of inline text
+    switchView("surprise", "okay");
 
-    feedbackEl.innerHTML = "";
-    responseButtons.style.display = "none"; // Hide buttons
-    noBtn.style.display = "none"; // Hide explicitly if on body
+    // Confetti Loop
+    const duration = 5000;
+    const end = Date.now() + duration;
 
-    // Remove spacer
-    const spacer = document.getElementById("no-btn-spacer");
-    if (spacer) spacer.remove();
+    (function frame() {
+      // launch a few confetti from the left edge
+      confetti({
+        particleCount: 7,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+      });
+      // and launch a few from the right edge
+      confetti({
+        particleCount: 7,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+      });
 
-    // document.getElementById("replay-btn").classList.remove("hidden"); // Removed as requested
-
-    triggerConfetti(); // Celebration!
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
   });
 }
 
-function createFallingHeart() {
-  const heart = document.createElement("div");
-  heart.classList.add("falling-heart");
-  heart.textContent = "💔";
-  heart.style.left = Math.random() * 80 + 10 + "vw"; // Randomize horizontal position
-  heart.style.animationDuration = Math.random() * 2 + 3 + "s"; // Randomize speed: 3-5s
-  document.body.appendChild(heart);
+if (noBtn) {
+  // Make the button run away
+  noBtn.addEventListener("mouseover", moveNoButton);
+  noBtn.addEventListener("touchstart", moveNoButton); // For mobile
 
-  // Cleanup
-  setTimeout(() => {
-    heart.remove();
-  }, 2000);
+  noBtn.addEventListener("click", () => {
+    // If they manage to click it
+    if (feedbackText) {
+      feedbackText.innerText = "Please... 😢";
+      feedbackText.style.color = "#555";
+    }
+  });
 }
 
-// Confetti Effect
-function triggerConfetti() {
-  const duration = 3000;
-  const end = Date.now() + duration;
+function moveNoButton(e) {
+  if (!noBtn) return;
+  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
-  (function frame() {
-    confetti({
-      particleCount: 7,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 },
-      colors: ["#90EE90", "#3CB371", "#ffffff"],
-    });
-    confetti({
-      particleCount: 7,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 },
-      colors: ["#90EE90", "#3CB371", "#ffffff"],
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
-  })();
-
-  setTimeout(() => {
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#90EE90", "#E0FFE0"],
-    });
-  }, 250);
+  noBtn.style.position = "fixed";
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
 }
 
 // Initialize

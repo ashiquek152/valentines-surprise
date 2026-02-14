@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@1,400;1,700&family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="sequence.css" />
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   </head>
   <body>
@@ -41,7 +42,6 @@
       <!-- View 2.5: Image Stack -->
       <section id="image-stack-view" class="glass-card hidden">
         <h2 class="title">Our Memories</h2>
-        <p class="subtitle">Tap to see more...</p>
         <div class="stack-container" id="stack-container">
           <!-- Images will be injected by JS -->
           <button id="next-btn" class="primary-btn hidden">
@@ -50,14 +50,12 @@
         </div>
       </section>
 
-      <!-- View 3: Final Surprise -->
       <section id="surprise-view" class="glass-card hidden">
         <div class="love-letter">
           <p>
-            I know I have hurt you sometimes. I’ve been angry, rude, and said
-            things I shouldn’t have. I know I made you cry, and I know it wasn’t
-            easy for you. I am truly sorry for every moment that caused you
-            pain.
+            I know I have hurt you sometimes. I’ve been angry, rude and I know
+            it wasn’t easy for you. I am truly sorry for every moment that
+            caused you pain.
           </p>
           <p>
             Nothing I did was ever intentional. I never wanted to make you sad.
@@ -68,21 +66,56 @@
           <p class="highlight">Please forgive me.</p>
           <h1 class="title glow small-title">
             Happy Valentine’s Day<br />
-            My Love of Life ❤️
+            My Love ❤️
           </h1>
         </div>
 
         <div class="response-buttons">
-          <button id="yes-btn" class="primary-btn">Yes</button>
-          <button id="no-btn" class="secondary-btn">No</button>
+          <button id="yes-btn" class="primary-btn">Okay</button>
+          <button id="no-btn" class="secondary-btn">Not okay</button>
         </div>
-        <div id="response-feedback" class="feedback-text"></div>
+      </section>
 
-        <button id="replay-btn" class="secondary-btn hidden">
-          Replay Surprise
-        </button>
+      <!-- View 4: Okay Response -->
+      <section id="okay-view" class="glass-card hidden">
+        <h1 class="title glow">I knew it! ❤️</h1>
+        <p class="subtitle" style="font-size: 1.5rem; margin-top: 1rem">
+          Happy Valentine's Day!
+        </p>
+        <div class="emoji-bounce" style="font-size: 3rem; margin-top: 2rem">
+          🌹
+        </div>
       </section>
     </main>
+
+    <!-- Sequence Container -->
+    <div id="sequence-container" class="sequence-overlay hidden">
+      <button id="left-trigger-btn" class="side-btn left-btn">
+        <span class="icon">🧸</span>
+      </button>
+
+      <button id="right-trigger-btn" class="side-btn right-btn hidden">
+        <span class="icon">🍫</span>
+      </button>
+
+      <div id="sequence-text" class="sequence-text hidden"></div>
+
+      <video id="walking-teddy" class="walking-teddy hidden" muted playsinline>
+        <source src="assets/gifts/teddy_walk.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      <div id="chocolate-container" class="chocolate-container"></div>
+
+      <div id="bouquet-container" class="bouquet-container hidden">
+        <img
+          src="assets/gifts/flower.png"
+          alt="Flower Bouquet"
+          class="bouquet-img"
+        />
+        <p class="bouquet-text">For you 🌹</p>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
