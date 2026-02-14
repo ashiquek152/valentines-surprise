@@ -74,6 +74,11 @@ function switchView(from, to) {
       // Add a small delay to allow display:block to apply before opacity transition
       requestAnimationFrame(() => {
         views[to].classList.add("active");
+
+        // Special case for 'surprise' view to show hidden elements if any
+        if (to === "surprise") {
+          // Ensure elements are managed by CSS classes in index.html primarily
+        }
       });
     }, 300);
   }
@@ -437,6 +442,9 @@ if (yesBtn) {
     const duration = 5000;
     const end = Date.now() + duration;
 
+    // Ensure noBtn is hidden
+    if (noBtn) noBtn.classList.add("hidden");
+
     (function frame() {
       // launch a few confetti from the left edge
       confetti({
@@ -460,28 +468,93 @@ if (yesBtn) {
   });
 }
 
+// Not Okay Button Logic
+let noBtnClickCount = 0;
+
 if (noBtn) {
   // Make the button run away
   noBtn.addEventListener("mouseover", moveNoButton);
-  noBtn.addEventListener("touchstart", moveNoButton); // For mobile
 
-  noBtn.addEventListener("click", () => {
-    // If they manage to click it
-    if (feedbackText) {
-      feedbackText.innerText = "Please... 😢";
-      feedbackText.style.color = "#555";
-    }
+  noBtn.addEventListener("click", (e) => {
+    // Increment click count
+    noBtnClickCount++;
+
+    // Drop broken hearts equal to click count
+    dropBrokenHearts(noBtnClickCount);
+
+    // Force move it away immediately on click too
+    moveNoButton();
+    e.stopPropagation();
   });
 }
 
-function moveNoButton(e) {
+function moveNoButton() {
   if (!noBtn) return;
-  const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-  const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
 
-  noBtn.style.position = "fixed";
+  // If first time moving (not fixed yet), create a placeholder to prevent reflow
+  if (getComputedStyle(noBtn).position !== "fixed") {
+    // 1. Get current dimensions and position
+    const rect = noBtn.getBoundingClientRect();
+
+    // 2. Create invisible placeholder
+    const placeholder = document.createElement("div");
+    placeholder.style.width = `${rect.width}px`;
+    placeholder.style.height = `${rect.height}px`;
+    placeholder.style.display = "inline-block"; // or match button display
+    placeholder.style.visibility = "hidden"; // Invisible but takes space
+
+    // 3. Insert placeholder before button moves
+    noBtn.parentNode.insertBefore(placeholder, noBtn);
+
+    // 4. Set button to fixed at current spot briefly to ensure smooth transition
+    noBtn.style.position = "fixed";
+    noBtn.style.left = `${rect.left}px`;
+    noBtn.style.top = `${rect.top}px`;
+    noBtn.style.width = `${rect.width}px`; // maintain size
+    noBtn.style.margin = "0"; // clear margins that might shift it
+  }
+
+  // Ensure we have window dimensions
+  const maxX = window.innerWidth - noBtn.offsetWidth - 20; // 20px buffer
+  const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+
+  // Random new position
+  const x = Math.max(10, Math.random() * maxX);
+  const y = Math.max(10, Math.random() * maxY);
+
+  // Use fixed position to break out of any scroll container
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+
+  // Clear potential conflicting constraints that cause stretching
+  noBtn.style.bottom = "auto";
+  noBtn.style.right = "auto";
+
+  noBtn.style.zIndex = "1000"; // Ensure it's on top
+}
+
+// Drop broken hearts
+function dropBrokenHearts(count) {
+  for (let i = 0; i < count; i++) {
+    const heart = document.createElement("div");
+    heart.classList.add("broken-heart");
+    heart.innerText = "💔";
+
+    // Random start X position
+    const startX = Math.random() * window.innerWidth;
+    heart.style.left = `${startX}px`;
+
+    // Random duration for fall
+    const duration = 2 + Math.random() * 3;
+    heart.style.animationDuration = `${duration}s`;
+
+    document.body.appendChild(heart);
+
+    // Clean up
+    setTimeout(() => {
+      heart.remove();
+    }, duration * 1000);
+  }
 }
 
 // Initialize
